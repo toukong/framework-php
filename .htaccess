@@ -1,0 +1,41 @@
+<IfModule mod_deflate.c>
+
+    # Compacta arquivos do tipo |html|text|css|javascript|php
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/x-javascript text/php
+
+</IfModule>
+
+<IfModule mod_rewrite.c>
+
+    RewriteEngine On
+
+    # Hack Anti-loop
+    RewriteCond %{ENV:REDIRECT_STATUS} 200
+    RewriteRule .* - [L]
+
+    # Adminitrador
+    RewriteRule ^/?admin/([a-z0-9-]+)/([a-z0-9-]+)/?$ /admin/_structure/$1/$2.php [NC,L]
+    RewriteRule ^/?admin/([a-z0-9-]+)/([a-z0-9-]+)/([a-z0-9-=_-]+)$ /admin/_structure/$1/$2.php?$3 [NC,L]
+
+    # Adminitrador | Model
+    RewriteRule ^/?admin/m/([a-z0-9-]+)/([a-z0-9-]+)/?$ /admin/_model/$1/$2.php [NC,L]
+
+    # Todas as Requisições
+    RewriteRule ^/?([a-z0-9-]+)/?$ /$1.php [NC,L]
+
+    # Scripts
+    RewriteRule ^\\.(js)$ /gzip.php?file=$1.js [NC]
+
+    # Styles
+    RewriteRule ^\\.(css)$ /gzip.php?file=$1.css [NC]
+
+</IfModule>
+
+<IfModule mod_expires.c>
+
+    ExpiresActive On
+    ExpiresDefault "access plus 7 day"
+
+</IfModule>
+
+ErrorDocument 404 /error.php?id=404
